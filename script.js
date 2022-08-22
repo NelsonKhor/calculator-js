@@ -18,8 +18,21 @@ function divide(num1, num2) {
     return num1/num2;
 }
 
-// // Test Cases
-// console.log(add(5,2));
-// console.log(subtract(5,2));
-// console.log(multiply(5,2));
-// console.log(divide(7,3));
+// Operate function
+function operate(operator, num1, num2) {
+    switch(true) {
+        case operator == "+":
+            return add(num1, num2);
+        case operator == "-":
+            return subtract(num1, num2);
+        case operator == "*":
+            return multiply(num1, num2);
+        case operator == "/":
+            return divide(num1, num2);
+        default:
+            console.log("operate() ERROR")
+    }
+}
+
+// Test Cases
+// console.log(operate('+','r',3));
