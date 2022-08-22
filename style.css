@@ -5,20 +5,38 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-.calculator {
-    border: 2px solid black;
-    height: auto;
-    width: 350px;
-    margin: auto;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    min-height: 100%;
 }
 
-#display {
+.calculator {
+    border: 10px solid gray;
+    height: auto;
+    width: 350px;
+}
+
+.display {
+    display: flex;
+    flex-direction: column;
     background-color: rgb(196, 250, 255);
-    height: 100px;
+    height: 150px;
     width: 100%;
-    font-size: 3rem;
+    font-size: 2rem;
     font-family: 'Silkscreen', cursive;
     text-align: right;
+}
+
+.history {
+
+}
+
+.current {
+    flex: 1;
+    align-self: flex-end;
 }
 
 .button-container{
