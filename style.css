@@ -1,0 +1,26 @@
+.calculator {
+    border: 2px solid red;
+    height: auto;
+    width: 300px;
+}
+
+#display {
+    border: 2px solid blue;
+    background-color: bisque;
+    height: 100px;
+}
+
+#clearButton {
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.button-container{
+    border: 2px solid black;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    padding: 10px;
+}
