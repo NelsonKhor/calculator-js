@@ -4,9 +4,9 @@ const operatorButtons = document.querySelectorAll('.operator');
 const currentDisplay = document.querySelector('.currentDisplay');
 const pastDisplay = document.querySelector('.pastDisplay');
 const allClearButton = document.querySelector('.clearButton');
-const equalButton = document.getElementById('equal');
+const equalButton = document.getElementById('equal');               // yet to implement
 const deleteButton = document.getElementById('delete');
-const dotButton = document.getElementById('dot')
+const dotButton = document.getElementById('dot')                    // yet to implement
 
 // Initialize Values
 currentDisplay.textContent = "";
@@ -15,22 +15,29 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
-const equalToggle = false;
+const equalToggle = false;                                          // yet to implement
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
 operatorButtons.forEach(opButton => opButton.addEventListener('click', getOperator));
-// equalButton.addEventListener('click', inputEqual);
 allClearButton.addEventListener('click', allClear);
 
 // Function: Get number buttons' value
 function getNumber(e){
+    if(currentDisplay.textContent == "0"){
+        return;
+    }
     const displayValue = e.target.value;
     currentDisplay.textContent += displayValue;
 }
 
 // Function: Get operator buttons' value
 function getOperator(e){
+    if ((pastDisplay.textContent == "0/") && (operator == "/") && (currentDisplay.textContent == "0")){
+        alert("Can't divide by 0");
+        allClear();
+        return;
+    }
     // if first number doesn't exist
     if (currentDisplay.textContent == "" && firstNumber == null){
         alert("Enter the first number first!");
@@ -60,7 +67,6 @@ function getOperator(e){
 // Function: Input second number
 function inputSecondNum(e){
     secondNumber = parseInt(currentDisplay.textContent);
-    console.log(`${firstNumber}${operator}${secondNumber}${e.target.value}`);
     result = operate(operator,firstNumber,secondNumber);
     if(e.target.value == "="){
         pastDisplay.textContent = result;
@@ -72,7 +78,7 @@ function inputSecondNum(e){
     }
     firstNumber = result;
     currentDisplay.textContent = "";
-    console.log(`${firstNumber},${operator},${secondNumber},${e.target.value}`);
+    // console.log(`${firstNumber},${operator},${secondNumber},${e.target.value}`);
 }
 
 // Function: All clear
@@ -85,6 +91,7 @@ function allClear(){
     result = null;
 }
 
+// Function: Backspace/delete
 function roundDecimal(decimal){
     return Math.round(decimal*1000) / 1000;
 }
