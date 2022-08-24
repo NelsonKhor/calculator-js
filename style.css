@@ -23,20 +23,24 @@ body {
     display: flex;
     flex-direction: column;
     background-color: rgb(196, 250, 255);
-    height: 150px;
+    height: auto;
     width: 100%;
     font-size: 2rem;
-    font-family: 'Silkscreen', cursive;
+    /* font-family: 'Silkscreen', cursive; */
     text-align: right;
 }
 
 .pastDisplay {
-
+    word-break: break-all;
+    word-wrap: break-word;
+    margin: 10px;
 }
 
 .currentDisplay {
     flex: 1;
-    align-self: flex-end;
+    word-break: break-all;
+    word-wrap: break-word;
+    margin: 10px;
 }
 
 .button-container{
