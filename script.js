@@ -1,3 +1,12 @@
+/* Known unfinished tasks/issues/bugs
+* 1. double pressing operator causes errors
+* 2. dot button yet to implement
+* 3. delete/backspace button yet to implement
+* 4. handling negative numbers
+* 5. Additional features like brackets and %
+*/
+
+
 // DOM Selections
 const numberButtons = document.querySelectorAll('.number');
 const operatorButtons = document.querySelectorAll('.operator');
@@ -15,14 +24,14 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
-const equalToggle = false;                                          // yet to implement
+const operatorToggle = false;                                          // yet to implement
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
 operatorButtons.forEach(opButton => opButton.addEventListener('click', getOperator));
 allClearButton.addEventListener('click', allClear);
 
-// Function: Get number buttons' value
+// Function: Get number buttons' value to display
 function getNumber(e){
     if(currentDisplay.textContent == "0"){
         return;
@@ -33,52 +42,50 @@ function getNumber(e){
 
 // Function: Get operator buttons' value
 function getOperator(e){
-    if ((pastDisplay.textContent == "0/") && (operator == "/") && (currentDisplay.textContent == "0")){
-        alert("Can't divide by 0");
-        allClear();
+    // case 0: double press operator
+    
+    // case 1: can't divide by 0
+    if ((operator == "/") && (currentDisplay.textContent == "0")){
+        noDivideZero();
         return;
     }
-    // if first number doesn't exist
+    // case 2: press operator before any number
     if (currentDisplay.textContent == "" && firstNumber == null){
-        alert("Enter the first number first!");
-        return; // stop the function
-    }
-    // if first number exist
-    if ((firstNumber != null) && (operator != null)) {
-        inputSecondNum(e);
+        numberFirst();
         return;
     }
-    // after pressing equal button
+    // case 3: first number exist, operator selected, proceed to calculate result
+    if ((firstNumber != null) && (operator != null)) {
+        calculateResult(e);
+        return;
+    }
+    // case 4: pressed equal
     if ((firstNumber != null) && (operator == null)) {
         operator = e.target.value;
         pastDisplay.textContent = pastDisplay.textContent + operator;
         return;
     }
-    // get operator value
+    // default case:
     operator = e.target.value;
-    // get first number value from current display
     firstNumber = parseInt(currentDisplay.textContent);
-    // add first number value and operator to past display
     pastDisplay.textContent = currentDisplay.textContent + operator;
-    // clear current display
     currentDisplay.textContent = "";
 }
 
-// Function: Input second number
-function inputSecondNum(e){
+// Function: Calculate the existing operation
+function calculateResult(e){
     secondNumber = parseInt(currentDisplay.textContent);
     result = operate(operator,firstNumber,secondNumber);
-    if(e.target.value == "="){
+    if(e.target.value == "="){  // if operator is '='
         pastDisplay.textContent = result;
         operator = null;
         secondNumber = 0;
-    } else {
+    } else {                    // if operator is '+ - * /'
         pastDisplay.textContent = result + e.target.value;
         operator = e.target.value;
     }
     firstNumber = result;
     currentDisplay.textContent = "";
-    // console.log(`${firstNumber},${operator},${secondNumber},${e.target.value}`);
 }
 
 // Function: All clear
@@ -91,9 +98,20 @@ function allClear(){
     result = null;
 }
 
-// Function: Backspace/delete
+// Function: Rounding to 3 d.p.
 function roundDecimal(decimal){
     return Math.round(decimal*1000) / 1000;
+}
+
+// Function: Display "No Divide by Zero" message
+function noDivideZero() {
+    alert("Can't divide by 0");
+    allClear();
+}
+
+// Function: Display "Number first before operator" message
+function numberFirst() {
+    alert("Enter the first number first!");
 }
 
 // Add function
