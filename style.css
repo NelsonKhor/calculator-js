@@ -34,6 +34,7 @@ body {
     word-break: break-all;
     word-wrap: break-word;
     margin: 10px;
+    min-height: 3rem;
 }
 
 .currentDisplay {
@@ -41,6 +42,7 @@ body {
     word-break: break-all;
     word-wrap: break-word;
     margin: 10px;
+    min-height: 3rem;
 }
 
 .button-container{

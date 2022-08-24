@@ -1,17 +1,22 @@
 // DOM Selections
-const buttons = document.querySelectorAll('button');
+const numberButtons = document.querySelectorAll('.number');
 const currentDisplay = document.querySelector('.currentDisplay');
 const pastDisplay = document.querySelector('.pastDisplay');
 const allClearButton = document.querySelector('.clearButton');
 const equalButton = document.querySelector('.equal');
 const deleteButton = document.getElementById('delete');
+const dotButton = document.getElementById('dot')
+
+// Initialize Value
+currentDisplay.textContent = "";
+pastDisplay.textContent = "";
 
 // Get Buttons' value
-buttons.forEach(button => button.addEventListener('click', () => {
-    const displayValue = button.getAttribute('value');
-    currentDisplay.textContent = displayValue;
-    console.log(button.getAttribute('value'));
-    return button.getAttribute('value');
+numberButtons.forEach(numButton => numButton.addEventListener('click', () => {
+    const displayValue = numButton.getAttribute('value');
+    currentDisplay.textContent += displayValue;
+    console.log(numButton.getAttribute('value'));
+    return numButton.getAttribute('value');
 }));
 
 // Add function
