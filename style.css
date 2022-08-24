@@ -88,12 +88,20 @@ button:active {
     background-color: rgb(254, 133, 133);
 }
 
-.equal {
-    background-color: #2da8f9;
+.clearButton:active {
+    background-color: rgb(250, 75, 75);
+}
+
+#equal {
+    background-color: #23a4f9;
     color: white;
     font-weight: bold;
 }
 
-.equal:hover {
+#equal:hover {
     background-color: #84ceff;
+}
+
+#equal:active {
+    background-color: #23a4f9;
 }
