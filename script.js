@@ -15,6 +15,7 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
+const equalToggle = false;
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
@@ -30,13 +31,19 @@ function getNumber(e){
 
 // Function: Get operator buttons' value
 function getOperator(e){
-    // check if the first entered value existed
-    if (currentDisplay.textContent == "" && firstNumber == nul){
+    // if first number doesn't exist
+    if (currentDisplay.textContent == "" && firstNumber == null){
         alert("Enter the first number first!");
         return; // stop the function
     }
-    if (firstNumber != null) {
+    // if first number exist
+    if ((firstNumber != null) && (operator != null)) {
         inputSecondNum(e);
+        return;
+    }
+    // after pressing equal button
+    if ((firstNumber != null) && (operator == null)) {
+        operator = e.target.value;
         return;
     }
     // get operator value
@@ -52,12 +59,19 @@ function getOperator(e){
 // Function: Input second number
 function inputSecondNum(e){
     secondNumber = parseInt(currentDisplay.textContent);
+    console.log(`${firstNumber}${operator}${secondNumber}${e.target.value}`);
     result = operate(operator,firstNumber,secondNumber);
-    pastDisplay.textContent = result + e.target.value;
-    operator = e.target.value;
+    if(e.target.value == "="){
+        pastDisplay.textContent = result;
+        operator = null;
+        secondNumber = 0;
+    } else {
+        pastDisplay.textContent = result + e.target.value;
+        operator = e.target.value;
+    }
     firstNumber = result;
     currentDisplay.textContent = "";
-    console.log(`${firstNumber}${operator}${secondNumber}${e.target.value}`);
+    console.log(`${firstNumber},${operator},${secondNumber},${e.target.value}`);
 }
 
 // Function: Equal sign operation
