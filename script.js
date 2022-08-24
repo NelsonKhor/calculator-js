@@ -20,6 +20,7 @@ let result = null;
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
 operatorButtons.forEach(opButton => opButton.addEventListener('click', getOperator));
 // equalButton.addEventListener('click', inputEqual);
+allClearButton.addEventListener('click', allClear);
 
 // Function: Get number buttons' value
 function getNumber(e){
@@ -70,6 +71,16 @@ function inputSecondNum(e){
 //     operator = null;
 // }
 
+// Function: All clear
+function allClear(){
+    currentDisplay.textContent = "";
+    pastDisplay.textContent = "";
+    firstNumber = null;
+    operator = null;
+    secondNumber = null;
+    result = null;
+}
+
 // Add function
 function add(num1, num2) {
     return num1 + num2;
@@ -93,16 +104,16 @@ function divide(num1, num2) {
 // Operate function
 function operate(operator, num1, num2) {
     switch(true) {
-        case operator === "+":
+        case operator == "+":
             return add(num1, num2);
-        case operator === "-":
+        case operator == "-":
             return subtract(num1, num2);
-        case operator === "*":
+        case operator == "*":
             return multiply(num1, num2);
-        case operator === "/":
+        case operator == "/":
             return divide(num1, num2);
         default:
-            console.log("operate() ERROR")
+            console.log("ERROR: check your code")
     }
 }
 
