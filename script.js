@@ -44,6 +44,7 @@ function getOperator(e){
     // after pressing equal button
     if ((firstNumber != null) && (operator == null)) {
         operator = e.target.value;
+        pastDisplay.textContent = pastDisplay.textContent + operator;
         return;
     }
     // get operator value
@@ -74,17 +75,6 @@ function inputSecondNum(e){
     console.log(`${firstNumber},${operator},${secondNumber},${e.target.value}`);
 }
 
-// Function: Equal sign operation
-// function inputEqual(e){
-//     console.log(`${firstNumber}${operator}${secondNumber}${e.target.value}`);
-//     secondNumber = parseInt(currentDisplay.textContent);
-//     result = operate(operator,firstNumber,secondNumber);
-//     pastDisplay.textContent = result;
-//     firstNumber = result;
-//     currentDisplay.textContent = "";
-//     operator = null;
-// }
-
 // Function: All clear
 function allClear(){
     currentDisplay.textContent = "";
@@ -93,6 +83,10 @@ function allClear(){
     operator = null;
     secondNumber = null;
     result = null;
+}
+
+function roundDecimal(decimal){
+    return Math.round(decimal*1000) / 1000;
 }
 
 // Add function
@@ -112,7 +106,7 @@ function multiply(num1, num2) {
 
 // Divide function
 function divide(num1, num2) {
-    return num1/num2;
+    return roundDecimal(num1/num2);
 }
 
 // Operate function
