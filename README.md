@@ -20,6 +20,7 @@ A web on-screen calculator built with vanilla JavaScript. It comes with basic fe
 ## Project Status/Improvement
 
 The project is **CURRENTLY BUILDING IN PROGRESS**.
+1. Handling initial negative values (noted on 24/08/2022)
 
 ## Issues/Bugs
 
