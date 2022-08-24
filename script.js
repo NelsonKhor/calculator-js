@@ -7,9 +7,12 @@ const equalButton = document.querySelector('.equal');
 const deleteButton = document.getElementById('delete');
 const dotButton = document.getElementById('dot')
 
-// Initialize Value
+// Initialize Values
 currentDisplay.textContent = "";
 pastDisplay.textContent = "";
+let firstNumber = 0;
+let operator;
+let secondNumber = 0;
 
 // Get Buttons' value
 numberButtons.forEach(numButton => numButton.addEventListener('click', () => {
