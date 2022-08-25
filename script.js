@@ -1,7 +1,7 @@
 /* Known unfinished tasks/issues/bugs
-* 1. double pressing operator causes errors
+* 1. double pressing operator causes errors     done
 * 2. dot button yet to implement
-* 3. delete/backspace button yet to implement
+* 3. delete/backspace button yet to implement   done
 * 4. handling negative numbers
 * 5. Additional features like brackets and %
 */
@@ -82,12 +82,9 @@ function getOperator(e){
 
 function calculate(){
     if(equalToggle){                        // prevent pressing '=' twice after calculation
-        debugThis();
         pastDisplay.textContent = "";
         secondNumber = null;
-        debugThis();
         allClear();
-        debugThis();
         return;
     }
     if((operator == "/") && (currentDisplay.textContent == "0")){       // no divide by zero
@@ -117,7 +114,7 @@ function calculate(){
 }
 
 function backspace(){
-
+    currentDisplay.textContent = currentDisplay.textContent.slice(0,-1);    // slice from behind
 }
 
 function getDot(){
