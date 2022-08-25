@@ -24,10 +24,11 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
-let operatorToggle = false;                                        // yet to implement
+// Toggles for conditional operation
+let operatorToggle = false;                      
 let equalToggle = false;
-let dotToggle = false;
 let divideByZero = false;
+let dotToggle = false;
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
@@ -39,79 +40,80 @@ dotButton.addEventListener('click',getDot);
 
 // Function: Get number buttons' value to display
 function getNumber(e){
-    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
-    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
-    if(currentDisplay.textContent == "0") {return;}
+    if(currentDisplay.textContent == "0") {return;}         // enter only 1 zero
     if(equalToggle) {
-        currentDisplay.textContent = ""
-        equalToggle = false;
+        currentDisplay.textContent = ""                     // override the previous operation...
+        equalToggle = false;                                // and start a new number
     };
     currentDisplay.textContent += e.target.value;
 }
 
 // Function: Get operator buttons' value
 function getOperator(e){
-    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
-    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
     if(currentDisplay.textContent == "") {                  // no operator first or repetitive operator
         numberFirst();
         return;
     }
-    if(equalToggle == true) {
-        pastDisplay.textContent = result + e.target.value;
-        operator = e.target.value;
+    if(equalToggle == true) {                               // previous operation was calculate()/pressed '='...
+        pastDisplay.textContent = result + e.target.value;  // this is for chaining multiple operation...
+        operator = e.target.value;                          // e.g) 12 + 7 - 5 * 3 =
         firstNumber = result;
         currentDisplay.textContent = "";
         equalToggle = false;
         operatorToggle = true;
         return;
-    }
-    if(operatorToggle) {
-        calculate();
-    }
+    }                                                       // this is also for chaining operation...
+    if(operatorToggle) {                                    // pressed 'operator' instead of '='
+        calculate();                                        // evaluate the existing pair...
+    }                                                       // before evaluate the next pair
     operator = e.target.value;
     firstNumber = currentDisplay.textContent;
     pastDisplay.textContent = currentDisplay.textContent + operator;
     currentDisplay.textContent = "";
     operatorToggle = true;
     equalToggle = false;
-    if(divideByZero) {                                      // make sure to reset all again
-        divideByZero = false;
-        allClear();
+    if(divideByZero) {                      // if previous operation was divided by 0
+        divideByZero = false;               // switch toggle off
+        if(firstNumber == "") {             // if firstNumber is empty and operator is selected
+            allClear();                     // reset it to prevent bug
+        }
     }
-    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
-    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
 }
 
 function calculate(){
-    if(equalToggle){
+    if(equalToggle){                        // prevent pressing '=' twice after calculation
+        debugThis();
         pastDisplay.textContent = "";
         secondNumber = null;
+        debugThis();
         allClear();
+        debugThis();
         return;
     }
-
-    if((operator == "/") && (currentDisplay.textContent == "0")){
+    if((operator == "/") && (currentDisplay.textContent == "0")){       // no divide by zero
         noDivideZero();
         divideByZero = true;
         return;
     }
-    if(currentDisplay.textContent != "") {
+    if(firstNumber == null && operator == null && currentDisplay.textContent != "") {
+        return;                      // SPECIAL CASE: if current display not empty and no 1st operand or operator selected: just ignore
+    }
+    if(currentDisplay.textContent != "") {              // if current display (2nd operand) is not empty
         secondNumber = currentDisplay.textContent;
         result = operate(operator, parseFloat(firstNumber), parseFloat(secondNumber));
         pastDisplay.textContent += currentDisplay.textContent;
         currentDisplay.textContent = result;
         operatorToggle = false;
         equalToggle = true;
-    } else {
-        pastDisplay.textContent = firstNumber;
-        currentDisplay.textContent = "";
-        operatorToggle = false;
-        equalToggle = true;
+        debugThis()
+    } else {                                            // else: current display (2nd operand) is empty
+        alert('Please enter a number');                // prevent pressing '=' without any operation
+        // pastDisplay.textContent = firstNumber;
+        // currentDisplay.textContent = "";
+        // operatorToggle = false;
+        // equalToggle = true;
+        // debugThis();
     }
-    // Debugging print:
-    // console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
-    // console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
 }
 
 function backspace(){
@@ -130,6 +132,7 @@ function allClear(){
     operator = null;
     secondNumber = null;
     result = null;
+    divideByZero = false;
     operatorToggle = false;
     equalToggle = false;
     dotToggle = false;
@@ -148,7 +151,7 @@ function noDivideZero() {
 
 // Function: Display "Number first before operator" message
 function numberFirst() {
-    alert("Enter the first number first!");
+    alert("Enter the number first!");
 }
 
 // Add function
@@ -187,3 +190,13 @@ function operate(operator, num1, num2) {
     }
 }
 
+// debugging function
+function debugThis(e){
+    console.log(`
+    ${firstNumber} ${operator} ${secondNumber} = ${result}
+    operator toggle:${operatorToggle}; 
+    equal toggle:${equalToggle}; 
+    divideByZero toggle:${divideByZero}
+    currentDisplay:${currentDisplay.textContent}
+    pastDisplay:${pastDisplay.textContent}`);
+}
