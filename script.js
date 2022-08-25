@@ -1,11 +1,7 @@
 /* Known unfinished tasks/issues/bugs
-* 1. double pressing operator causes errors     done
-* 2. dot button yet to implement
-* 3. delete/backspace button yet to implement   done
 * 4. handling negative numbers
 * 5. Additional features like brackets and %
 */
-
 
 // DOM Selections
 const pastDisplay = document.querySelector('.pastDisplay');
@@ -15,7 +11,7 @@ const operatorButtons = document.querySelectorAll('.operator');
 const allClearButton = document.querySelector('.clearButton');
 const equalButton = document.getElementById('equal');
 const deleteButton = document.getElementById('delete');
-const dotButton = document.getElementById('dot')                    // yet to implement
+const dotButton = document.getElementById('dot')                    
 
 // Initialize Values
 currentDisplay.textContent = "";
@@ -24,11 +20,11 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
+
 // Toggles for conditional operation
 let operatorToggle = false;                      
 let equalToggle = false;
 let divideByZero = false;
-let dotToggle = false;
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
@@ -117,8 +113,10 @@ function backspace(){
     currentDisplay.textContent = currentDisplay.textContent.slice(0,-1);    // slice from behind
 }
 
-function getDot(){
-
+function getDot(e){
+    if (currentDisplay.textContent.includes(".")) {return}              // check for dot on display
+    if (currentDisplay.textContent == "") {return currentDisplay.textContent = "0" + e.target.value}
+    currentDisplay.textContent += e.target.value;
 }
 
 // Function: All clear
@@ -132,7 +130,6 @@ function allClear(){
     divideByZero = false;
     operatorToggle = false;
     equalToggle = false;
-    dotToggle = false;
 }
 
 // Function: Rounding to 3 d.p.
