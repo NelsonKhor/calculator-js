@@ -8,12 +8,12 @@
 
 
 // DOM Selections
+const pastDisplay = document.querySelector('.pastDisplay');
+const currentDisplay = document.querySelector('.currentDisplay');
 const numberButtons = document.querySelectorAll('.number');
 const operatorButtons = document.querySelectorAll('.operator');
-const currentDisplay = document.querySelector('.currentDisplay');
-const pastDisplay = document.querySelector('.pastDisplay');
 const allClearButton = document.querySelector('.clearButton');
-const equalButton = document.getElementById('equal');               // yet to implement
+const equalButton = document.getElementById('equal');
 const deleteButton = document.getElementById('delete');
 const dotButton = document.getElementById('dot')                    // yet to implement
 
@@ -24,68 +24,102 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
-const operatorToggle = false;                                          // yet to implement
+let operatorToggle = false;                                        // yet to implement
+let equalToggle = false;
+let dotToggle = false;
+let divideByZero = false;
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
 operatorButtons.forEach(opButton => opButton.addEventListener('click', getOperator));
 allClearButton.addEventListener('click', allClear);
+equalButton.addEventListener('click', calculate);
+deleteButton.addEventListener('click', backspace);
+dotButton.addEventListener('click',getDot);
 
 // Function: Get number buttons' value to display
 function getNumber(e){
-    if(currentDisplay.textContent == "0"){
-        return;
-    }
-    const displayValue = e.target.value;
-    currentDisplay.textContent += displayValue;
+    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
+    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
+    if(currentDisplay.textContent == "0") {return;}
+    if(equalToggle) {
+        currentDisplay.textContent = ""
+        equalToggle = false;
+    };
+    currentDisplay.textContent += e.target.value;
 }
 
 // Function: Get operator buttons' value
 function getOperator(e){
-    // case 0: double press operator
-    
-    // case 1: can't divide by 0
-    if ((operator == "/") && (currentDisplay.textContent == "0")){
-        noDivideZero();
-        return;
-    }
-    // case 2: press operator before any number
-    if (currentDisplay.textContent == "" && firstNumber == null){
+    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
+    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
+    if(currentDisplay.textContent == "") {                  // no operator first or repetitive operator
         numberFirst();
         return;
     }
-    // case 3: first number exist, operator selected, proceed to calculate result
-    if ((firstNumber != null) && (operator != null)) {
-        calculateResult(e);
-        return;
-    }
-    // case 4: pressed equal
-    if ((firstNumber != null) && (operator == null)) {
-        operator = e.target.value;
-        pastDisplay.textContent = pastDisplay.textContent + operator;
-        return;
-    }
-    // default case:
-    operator = e.target.value;
-    firstNumber = parseInt(currentDisplay.textContent);
-    pastDisplay.textContent = currentDisplay.textContent + operator;
-    currentDisplay.textContent = "";
-}
-
-// Function: Calculate the existing operation
-function calculateResult(e){
-    secondNumber = parseInt(currentDisplay.textContent);
-    result = operate(operator,firstNumber,secondNumber);
-    if(e.target.value == "="){  // if operator is '='
-        pastDisplay.textContent = result;
-        operator = null;
-        secondNumber = 0;
-    } else {                    // if operator is '+ - * /'
+    if(equalToggle == true) {
         pastDisplay.textContent = result + e.target.value;
         operator = e.target.value;
+        firstNumber = result;
+        currentDisplay.textContent = "";
+        equalToggle = false;
+        operatorToggle = true;
+        return;
     }
-    firstNumber = result;
+    if(operatorToggle) {
+        calculate();
+    }
+    operator = e.target.value;
+    firstNumber = currentDisplay.textContent;
+    pastDisplay.textContent = currentDisplay.textContent + operator;
     currentDisplay.textContent = "";
+    operatorToggle = true;
+    equalToggle = false;
+    if(divideByZero) {                                      // make sure to reset all again
+        divideByZero = false;
+        allClear();
+    }
+    console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
+    console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
+}
+
+function calculate(){
+    if(equalToggle){
+        pastDisplay.textContent = "";
+        secondNumber = null;
+        allClear();
+        return;
+    }
+
+    if((operator == "/") && (currentDisplay.textContent == "0")){
+        noDivideZero();
+        divideByZero = true;
+        return;
+    }
+    if(currentDisplay.textContent != "") {
+        secondNumber = currentDisplay.textContent;
+        result = operate(operator, parseFloat(firstNumber), parseFloat(secondNumber));
+        pastDisplay.textContent += currentDisplay.textContent;
+        currentDisplay.textContent = result;
+        operatorToggle = false;
+        equalToggle = true;
+    } else {
+        pastDisplay.textContent = firstNumber;
+        currentDisplay.textContent = "";
+        operatorToggle = false;
+        equalToggle = true;
+    }
+    // Debugging print:
+    // console.log(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
+    // console.log(`operator:${operatorToggle}; equal:${equalToggle}`);
+}
+
+function backspace(){
+
+}
+
+function getDot(){
+
 }
 
 // Function: All clear
@@ -96,6 +130,9 @@ function allClear(){
     operator = null;
     secondNumber = null;
     result = null;
+    operatorToggle = false;
+    equalToggle = false;
+    dotToggle = false;
 }
 
 // Function: Rounding to 3 d.p.
