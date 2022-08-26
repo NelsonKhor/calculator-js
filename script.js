@@ -15,12 +15,8 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
-let holdValue;
-
-// Toggles for conditional operation
-let operatorToggle = false;                      
+let holdValue;                 
 let equalToggle = false;
-let divideByZero = false;
 
 // Add 'click' event listener to buttons 
 numberButtons.forEach(numButton => numButton.addEventListener('click', grabValue));
@@ -36,87 +32,80 @@ dotButton.addEventListener('click',getDot);
 window.addEventListener('keydown',grabKeyBoardValue);
 window.addEventListener('keydown',keyboardEventHandler);
 
-// Function: Grab the buttons' value
+// Function: Grab the button value
 function grabValue(e){
     holdValue = e.target.value;
-    return holdValue;
+    return holdValue
 }
 
 // Function: Grab the keyboard value
 function grabKeyBoardValue(e){
     holdValue = e.key;
-    return holdValue;
+    return holdValue
 }
 
-// Function: Get number buttons' value to display
-function getNumber(){
-    if(currentDisplay.textContent == "0") {return;}         // enter only 1 zero
-    if(equalToggle) {
-        currentDisplay.textContent = ""                     // override the previous operation...
-        equalToggle = false;                                // and start a new number
-    };
-    currentDisplay.textContent += holdValue;
+// Function: Append to current display
+function appendDisplay(userInput){
+    currentDisplay.textContent += userInput;
 }
-
-// Function: Get operator buttons' value
-function getOperator(){
-    if(currentDisplay.textContent == "") {                  // no operator first or repetitive operator
-        numberFirst();
-        return;
+// Function: Move to past display
+function moveToPastDisplay(){
+    pastDisplay.textContent = currentDisplay.textContent;
+    if(operator != null) {
+        pastDisplay.textContent += operator;
     }
-    if(equalToggle == true) {                               // previous operation was calculate()/pressed '='...
-        pastDisplay.textContent = result + holdValue;  // this is for chaining multiple operation...
-        operator = holdValue;                          // e.g) 12 + 7 - 5 * 3 =
-        firstNumber = result;
-        currentDisplay.textContent = "";
-        equalToggle = false;
-        operatorToggle = true;
-        return;
-    }                                                       // this is also for chaining operation...
-    if(operatorToggle) {                                    // pressed 'operator' instead of '='
-        calculate();                                        // evaluate the existing pair...
-        return;
-    }                                                       // before evaluate the next pair
-    operator = holdValue;
-    firstNumber = currentDisplay.textContent;
-    pastDisplay.textContent = currentDisplay.textContent + operator;
     currentDisplay.textContent = "";
-    operatorToggle = true;
-    equalToggle = false;
-    if(divideByZero) {                      // if previous operation was divided by 0
-        divideByZero = false;               // switch toggle off
-        if(firstNumber == "") {             // if firstNumber is empty and operator is selected
-            allClear();                     // reset it to prevent bug
-        }
-    }
 }
 
-// Function: run operate() to calculate result
-function calculate(){
-    if(equalToggle){                        // prevent pressing '=' twice after calculation
-        pastDisplay.textContent = "";
+// Function: Get First Operand from value and append to screen
+function getNumber(){
+    if(currentDisplay.textContent == "0") {return;}                         // if "0" already pressed > do nothing
+    if(result != null) {allClear();}                                        // if previous was an operation, and entering new number > reset all
+    appendDisplay(holdValue);
+}
+
+// Function: Get operator value
+function getOperator(){
+    if(currentDisplay.textContent == "") {                                  // current display is empty (aka no 1st operand)         
+        return numberFirst();
+    }
+    if(operator != null) {                                                  // continue operation with operator
+        calculate();
+        pastDisplay.textContent = result + holdValue;
+        firstNumber = result;
+        operator = holdValue;
+        // reset
         secondNumber = null;
-        allClear();
-        return;
+        result = null;
+        equalToggle = false;
+        currentDisplay.textContent = "";
+        return
+    }                                                 
+    firstNumber = currentDisplay.textContent;                               // default: save 1st operand, save operator
+    operator = holdValue;
+    moveToPastDisplay();
+}
+
+// Function: Press '=' and evaluate the operation
+function calculate(){
+    if(equalToggle == true && result != null){                              // chaining result after operation (for pressing new operator)
+        return
     }
-    if((operator == "/") && (currentDisplay.textContent == "0")){       // no divide by zero
-        noDivideZero();
-        divideByZero = true;
-        return;
+    if(equalToggle == true){                                                // already pressed equal - twice
+        return alert("You already pressed equal!");
     }
-    if(firstNumber == null && operator == null && currentDisplay.textContent != "") {
-        return;                      // SPECIAL CASE: if current display not empty and no 1st operand or operator selected: just ignore
+    if((operator == "/") && (currentDisplay.textContent == "0")){           // cannot divide by zero
+        return noDivideZero()
     }
-    if(currentDisplay.textContent != "") {              // if current display (2nd operand) is not empty
-        secondNumber = currentDisplay.textContent;
-        result = operate(operator, parseFloat(firstNumber), parseFloat(secondNumber));
-        pastDisplay.textContent += currentDisplay.textContent;
-        currentDisplay.textContent = result;
-        operatorToggle = false;
-        equalToggle = true;
-    } else {                                            // else: current display (2nd operand) is empty
-        alert('Please enter a number!');                // prevent pressing '=' without any operation
+    if(currentDisplay.textContent == "" && pastDisplay.textContent == ""){  // press equal without any input
+        return numberFirst()
     }
+    if(currentDisplay.textContent != "" && operator == null) {return}       // press equal with only current display
+    secondNumber = currentDisplay.textContent;                              // default: save 2nd operand, do calculation
+    result = operate(operator, parseFloat(firstNumber), parseFloat(secondNumber));
+    pastDisplay.textContent += currentDisplay.textContent + "=";
+    currentDisplay.textContent = result;
+    equalToggle = true;
 }
 
 function backspace(){
@@ -124,13 +113,8 @@ function backspace(){
 }
 
 function getDot(){
-    if (currentDisplay.textContent.includes(".")) {return}              // check for dot on display
+    if (currentDisplay.textContent.includes(".")) {return}                  // check for dot on display
     if (currentDisplay.textContent == "") {return currentDisplay.textContent = "0."}
-    if (currentDisplay.textContent != "" && equalToggle == true) {
-        allClear();
-        equalToggle = true;
-        return currentDisplay.textContent = "0.";
-    }
     currentDisplay.textContent += ".";
 }
 
@@ -141,8 +125,6 @@ function allClear(){
     operator = null;
     secondNumber = null;
     result = null;
-    divideByZero = false;
-    operatorToggle = false;
     equalToggle = false;
 }
 
@@ -204,5 +186,5 @@ function keyboardEventHandler(e){
     if(e.key === "Escape") allClear();
     if(e.key === "Backspace") backspace();
     if(e.key == '.') getDot();
-    if(e.key == '=' || e.key === "Enter") calculate();   /* Enter doesn't work as expected sometime... */
+    if(e.key == '=') calculate();                                   /* Enter doesn't work as expected sometime... */
 }
