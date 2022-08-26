@@ -1,8 +1,3 @@
-/* Known unfinished tasks/issues/bugs
-* 4. handling negative numbers
-* 5. Additional features like brackets and %
-*/
-
 // DOM Selections
 const pastDisplay = document.querySelector('.pastDisplay');
 const currentDisplay = document.querySelector('.currentDisplay');
@@ -20,6 +15,7 @@ let firstNumber = null;
 let operator = null;
 let secondNumber = null;
 let result = null;
+let holdValue;
 
 // Toggles for conditional operation
 let operatorToggle = false;                      
@@ -27,32 +23,50 @@ let equalToggle = false;
 let divideByZero = false;
 
 // Add 'click' event listener to buttons 
+numberButtons.forEach(numButton => numButton.addEventListener('click', grabValue));
 numberButtons.forEach(numButton => numButton.addEventListener('click', getNumber));
+operatorButtons.forEach(opButton => opButton.addEventListener('click', grabValue));
 operatorButtons.forEach(opButton => opButton.addEventListener('click', getOperator));
 allClearButton.addEventListener('click', allClear);
 equalButton.addEventListener('click', calculate);
 deleteButton.addEventListener('click', backspace);
 dotButton.addEventListener('click',getDot);
 
+// Keyboard support
+window.addEventListener('keydown',grabKeyBoardValue);
+window.addEventListener('keydown',keyboardEventHandler);
+
+// Function: Grab the buttons' value
+function grabValue(e){
+    holdValue = e.target.value;
+    return holdValue;
+}
+
+// Function: Grab the keyboard value
+function grabKeyBoardValue(e){
+    holdValue = e.key;
+    return holdValue;
+}
+
 // Function: Get number buttons' value to display
-function getNumber(e){
+function getNumber(){
     if(currentDisplay.textContent == "0") {return;}         // enter only 1 zero
     if(equalToggle) {
         currentDisplay.textContent = ""                     // override the previous operation...
         equalToggle = false;                                // and start a new number
     };
-    currentDisplay.textContent += e.target.value;
+    currentDisplay.textContent += holdValue;
 }
 
 // Function: Get operator buttons' value
-function getOperator(e){
+function getOperator(){
     if(currentDisplay.textContent == "") {                  // no operator first or repetitive operator
         numberFirst();
         return;
     }
     if(equalToggle == true) {                               // previous operation was calculate()/pressed '='...
-        pastDisplay.textContent = result + e.target.value;  // this is for chaining multiple operation...
-        operator = e.target.value;                          // e.g) 12 + 7 - 5 * 3 =
+        pastDisplay.textContent = result + holdValue;  // this is for chaining multiple operation...
+        operator = holdValue;                          // e.g) 12 + 7 - 5 * 3 =
         firstNumber = result;
         currentDisplay.textContent = "";
         equalToggle = false;
@@ -61,8 +75,9 @@ function getOperator(e){
     }                                                       // this is also for chaining operation...
     if(operatorToggle) {                                    // pressed 'operator' instead of '='
         calculate();                                        // evaluate the existing pair...
+        return;
     }                                                       // before evaluate the next pair
-    operator = e.target.value;
+    operator = holdValue;
     firstNumber = currentDisplay.textContent;
     pastDisplay.textContent = currentDisplay.textContent + operator;
     currentDisplay.textContent = "";
@@ -76,6 +91,7 @@ function getOperator(e){
     }
 }
 
+// Function: run operate() to calculate result
 function calculate(){
     if(equalToggle){                        // prevent pressing '=' twice after calculation
         pastDisplay.textContent = "";
@@ -98,14 +114,8 @@ function calculate(){
         currentDisplay.textContent = result;
         operatorToggle = false;
         equalToggle = true;
-        debugThis()
     } else {                                            // else: current display (2nd operand) is empty
-        alert('Please enter a number');                // prevent pressing '=' without any operation
-        // pastDisplay.textContent = firstNumber;
-        // currentDisplay.textContent = "";
-        // operatorToggle = false;
-        // equalToggle = true;
-        // debugThis();
+        alert('Please enter a number!');                // prevent pressing '=' without any operation
     }
 }
 
@@ -113,13 +123,17 @@ function backspace(){
     currentDisplay.textContent = currentDisplay.textContent.slice(0,-1);    // slice from behind
 }
 
-function getDot(e){
+function getDot(){
     if (currentDisplay.textContent.includes(".")) {return}              // check for dot on display
-    if (currentDisplay.textContent == "") {return currentDisplay.textContent = "0" + e.target.value}
-    currentDisplay.textContent += e.target.value;
+    if (currentDisplay.textContent == "") {return currentDisplay.textContent = "0."}
+    if (currentDisplay.textContent != "" && equalToggle == true) {
+        allClear();
+        equalToggle = true;
+        return currentDisplay.textContent = "0.";
+    }
+    currentDisplay.textContent += ".";
 }
 
-// Function: All clear
 function allClear(){
     currentDisplay.textContent = "";
     pastDisplay.textContent = "";
@@ -132,14 +146,13 @@ function allClear(){
     equalToggle = false;
 }
 
-// Function: Rounding to 3 d.p.
 function roundDecimal(decimal){
     return Math.round(decimal*1000) / 1000;
 }
 
 // Function: Display "No Divide by Zero" message
 function noDivideZero() {
-    alert("Can't divide by 0");
+    alert("Can't divide by 0!");
     allClear();
 }
 
@@ -160,7 +173,7 @@ function subtract(num1, num2) {
 
 // Multiply function
 function multiply(num1, num2) {
-    return num1 * num2;
+    return roundDecimal(num1 * num2);
 }
 
 // Divide function
@@ -184,13 +197,12 @@ function operate(operator, num1, num2) {
     }
 }
 
-// debugging function
-function debugThis(e){
-    console.log(`
-    ${firstNumber} ${operator} ${secondNumber} = ${result}
-    operator toggle:${operatorToggle}; 
-    equal toggle:${equalToggle}; 
-    divideByZero toggle:${divideByZero}
-    currentDisplay:${currentDisplay.textContent}
-    pastDisplay:${pastDisplay.textContent}`);
+// Function: Handling keyboard events
+function keyboardEventHandler(e){
+    if(e.key >= 0 && e.key <=9) return getNumber();
+    if(e.key == '+' || e.key == '-' || e.key == '*' || e.key == '/') getOperator();
+    if(e.key === "Escape") allClear();
+    if(e.key === "Backspace") backspace();
+    if(e.key == '.') getDot();
+    if(e.key == '=' || e.key === "Enter") calculate();   /* Enter doesn't work as expected sometime... */
 }
