@@ -100,6 +100,9 @@ function calculate(){
     if(currentDisplay.textContent == "" && pastDisplay.textContent == ""){  // press equal without any input
         return numberFirst()
     }
+    if(currentDisplay.textContent == "" && pastDisplay.textContent != ""){
+        return numberFirst()
+    }
     if(currentDisplay.textContent != "" && operator == null) {return}       // press equal with only current display
     secondNumber = currentDisplay.textContent;                              // default: save 2nd operand, do calculation
     result = operate(operator, parseFloat(firstNumber), parseFloat(secondNumber));
